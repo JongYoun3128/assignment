@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="day2.css" />
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="button-list">
+            <!-- <button class="button-01">안녕하세요</button>
+    <button class="button-02">안녕하세요</button>
+    <button class="button-03">안녕하세요</button>       
+    <button class="button-04">안녕하세요</button>
+    <button class="button-05">안녕하세요</button>
+    <button class="button-06">안녕하세요</button>
+    <button class="button-07">안녕하세요</button>
+    <button class="button-08">안녕하세요</button>
+    <button class="button-09">안녕하세요</button> -->
+            <!-- <button class="spinner">
+                <span class="spinnet-text">Click</span>
+            </button> -->
+        </div>
+
+        <script>
+            const buttonList = document.querySelector(".button-list");
+            buttonList.innerHTML = `
+    <button class="button-01 button">안녕하세요</button>
+    <button class="button-02 button">안녕하세요</button>
+    <button class="button-03 button">안녕하세요</button>       
+    <button class="button-04 button">안녕하세요</button>
+    <button class="button-05 button">안녕하세요</button>
+    <button class="button-06 button">안녕하세요</button>
+    <button class="button-07 button">안녕하세요</button>
+    <button class="button-08 button">안녕하세요</button>
+    <button class="button-09 button">안녕하세요</button>
+    <button class="spinner">
+                <span class="spinnet-text">Click</span>
+            </button>
+    `;
+            const button = document.querySelector(".spinner");
+            const btnText = document.querySelector(".spinnet-text");
+
+            button.addEventListener("click", () => {
+                button.disabled = true;
+                btnText.textContent = ""; // 텍스트 제거
+
+                // 스피너 추가
+                const spinner = document.createElement("div");
+                spinner.classList.add("spinner-road");
+                button.appendChild(spinner);
+
+                // 예시: 2초 후 로딩 종료
+                setTimeout(() => {
+                    spinner.remove();
+                    btnText.textContent = "클릭";
+                    button.disabled = false;
+                }, 2000);
+            });
+        </script>
+    </body>
+</html>

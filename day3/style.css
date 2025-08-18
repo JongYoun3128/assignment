@@ -1,0 +1,92 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #eee;
+}
+.flag {
+    width: 300px;
+    height: 200px;
+    background: white;
+    border: 2px solid black;
+    position: relative;
+}
+/* 태극 원 */
+.circle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    transform: translate(-50%, -50%);
+}
+.red {
+    background: red;
+    width: 100%;
+    height: 50%;
+}
+.blue {
+    background: blue;
+    width: 100%;
+    height: 50%;
+}
+
+/* 건곤감리 막대 공통 스타일 */
+.bar {
+    width: 40px;
+    height: 6px;
+    background: black;
+    margin: 2px 0;
+}
+.trigram {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 위치 */
+.geon {
+    top: 15px;
+    left: 15px;
+}
+.gon {
+    bottom: 15px;
+    right: 15px;
+}
+.gam {
+    bottom: 15px;
+    left: 15px;
+}
+.ri {
+    top: 15px;
+    right: 15px;
+}
+
+/* 끊어진 막대 */
+.broken {
+    display: flex;
+    justify-content: space-between;
+}
+.broken div {
+    width: 18px;
+    height: 6px;
+    background: black;
+}
+.gon .broken div {
+    margin: 2px 2px;
+}
+.geon {
+    transform: rotate(145deg);
+}
+.gon {
+    transform: rotate(145deg);
+}
+.gam {
+    transform: rotate(45deg);
+}
+.ri {
+    transform: rotate(45deg);
+}

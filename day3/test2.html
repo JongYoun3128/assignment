@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>실시간 유효성 검사 로그인 폼</title>
+        <style>
+            :root {
+                --bg: #0b1020;
+                --card: #131a2b;
+                --text: #e8ecf1;
+                --muted: #9aa7b5;
+                --accent: #4f8cff;
+                --error: #ff5a5f;
+                --border: #2a3550;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
+                    "Apple Color Emoji", "Segoe UI Emoji";
+                background: radial-gradient(1200px 800px at 20% 10%, #101a34 0%, var(--bg) 40%), var(--bg);
+                color: var(--text);
+                min-height: 100svh;
+                display: grid;
+                place-items: center;
+                padding: 24px;
+            }
+            .card {
+                width: 100%;
+                max-width: 420px;
+                background: linear-gradient(180deg, #151d32, #10182b);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 24px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            }
+            h1 {
+                font-size: 22px;
+                margin: 0 0 4px;
+            }
+            .sub {
+                color: var(--muted);
+                font-size: 14px;
+                margin-bottom: 20px;
+            }
+            .field {
+                margin-bottom: 16px;
+            }
+            label {
+                display: block;
+                margin-bottom: 6px;
+                font-size: 14px;
+                color: var(--text);
+            }
+            .input-wrap {
+                position: relative;
+            }
+            input[type="email"],
+            input[type="password"],
+            input[type="text"] {
+                width: 100%;
+                padding: 12px 12px;
+                border-radius: 12px;
+                outline: none;
+                border: 1.5px solid var(--border);
+                background: #0f1630;
+                color: var(--text);
+                transition: border-color 0.15s ease, box-shadow 0.15s ease;
+                font-size: 15px;
+            }
+            input:focus {
+                border-color: var(--accent);
+                box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.15);
+            }
+
+            /* invalid 상태 */
+            .invalid input {
+                border-color: var(--error);
+                box-shadow: 0 0 0 4px rgba(255, 90, 95, 0.12);
+            }
+            .help {
+                font-size: 12px;
+                margin-top: 6px;
+                color: var(--muted);
+            }
+            .help.err {
+                color: var(--error);
+            }
+
+            .toggle-btn {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                border: 0;
+                background: transparent;
+                color: var(--muted);
+                cursor: pointer;
+                padding: 6px 8px;
+                border-radius: 8px;
+                font-size: 12px;
+            }
+            .toggle-btn:hover {
+                color: var(--text);
+            }
+
+            .actions {
+                margin-top: 20px;
+                display: flex;
+                gap: 10px;
+            }
+            .btn {
+                flex: 1;
+                padding: 12px 14px;
+                border-radius: 12px;
+                border: 1px solid var(--border);
+                background: #162041;
+                color: var(--text);
+                cursor: pointer;
+                font-weight: 600;
+            }
+            .btn.primary {
+                background: linear-gradient(180deg, #3b79ff, #2b60d6);
+                border-color: #2b60d6;
+            }
+            .btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .row {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 12px;
+                color: var(--muted);
+            }
+        </style>
+    </head>
+    <body>
+        <main class="card">
+            <h1>로그인</h1>
+            <p class="sub">입력할 때마다 즉시 유효성 검사합니다.</p>
+
+            <form id="loginForm" novalidate>
+                <!-- 이메일 -->
+                <div class="field" id="emailField">
+                    <label for="email">이메일</label>
+                    <div class="input-wrap">
+                        <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        />
+                    </div>
+                    <div class="help" id="emailHelp">
+                        '@' 포함, 도메인은 .com, .net 등 정상 도메인으로 끝나야 합니다.
+                    </div>
+                </div>
+
+                <!-- 비밀번호 -->
+                <div class="field" id="pwField">
+                    <label for="password">비밀번호</label>
+                    <div class="input-wrap">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="8자 이상"
+                            autocomplete="current-password"
+                            required
+                            minlength="8"
+                        />
+                        <button type="button" class="toggle-btn" id="togglePw" aria-label="비밀번호 보기">보기</button>
+                    </div>
+                    <div class="help" id="pwHelp">8자 이상이어야 합니다.</div>
+                </div>
+
+                <div class="row">
+                    <span>유효성 상태가 맞지 않으면 빨간 테두리로 표시됩니다.</span>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn primary" id="submitBtn">로그인</button>
+                    <button type="reset" class="btn">초기화</button>
+                </div>
+            </form>
+        </main>
+
+        <script>
+            // 간단한 이메일 규칙: @ 포함 + 마지막에 ".tld"(2글자 이상)로 끝나도록 검사
+            // 사용자가 요청한 요구사항(예: .com, .net 등) 충족: 다양한 TLD를 허용
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+            const $ = (sel) => document.querySelector(sel);
+            const email = $("#email");
+            const password = $("#password");
+            const emailField = $("#emailField");
+            const pwField = $("#pwField");
+            const emailHelp = $("#emailHelp");
+            const pwHelp = $("#pwHelp");
+            const togglePw = $("#togglePw");
+            const form = $("#loginForm");
+
+            function setValidity(fieldEl, helpEl, isValid, messageWhenInvalid) {
+                fieldEl.classList.toggle("invalid", !isValid);
+                helpEl.textContent = isValid ? helpEl.dataset.ok || helpEl.textContent : messageWhenInvalid;
+                helpEl.classList.toggle("err", !isValid);
+            }
+
+            function validateEmail(value) {
+                // 즉시 검사: 공백도 불가
+                return emailRegex.test(String(value).trim());
+            }
+
+            function validatePassword(value) {
+                return String(value).length >= 8;
+            }
+
+            function runValidation() {
+                const eValid = validateEmail(email.value);
+                const pValid = validatePassword(password.value);
+
+                setValidity(
+                    emailField,
+                    emailHelp,
+                    eValid,
+                    "올바른 이메일 형식이 아닙니다. '@' 포함 및 .com / .net 등으로 끝나야 합니다."
+                );
+                setValidity(pwField, pwHelp, pValid, "비밀번호는 8자 이상이어야 합니다.");
+                return eValid && pValid;
+            }
+
+            // 입력할 때마다 즉시 검사
+            email.addEventListener("input", runValidation);
+            password.addEventListener("input", runValidation);
+
+            // 비밀번호 보기/숨기기
+            togglePw.addEventListener("click", () => {
+                const showing = password.getAttribute("type") === "text";
+                password.setAttribute("type", showing ? "password" : "text");
+                togglePw.textContent = showing ? "보기" : "숨기기";
+                togglePw.setAttribute("aria-label", showing ? "비밀번호 보기" : "비밀번호 숨기기");
+            });
+
+            // 제출 시 기본 동작 막고 데모용 알림
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                if (runValidation()) {
+                    alert("검증 성공! 제출 가능 상태입니다.");
+                } else {
+                    alert("입력값을 다시 확인해 주세요.");
+                }
+            });
+
+            // 리셋 시 상태 초기화
+            form.addEventListener("reset", () => {
+                setTimeout(() => {
+                    emailField.classList.remove("invalid");
+                    pwField.classList.remove("invalid");
+                    emailHelp.classList.remove("err");
+                    pwHelp.classList.remove("err");
+                    emailHelp.textContent = "'@' 포함, 도메인은 .com, .net 등 정상 도메인으로 끝나야 합니다.";
+                    pwHelp.textContent = "8자 이상이어야 합니다.";
+                }, 0);
+            });
+        </script>
+    </body>
+</html>
