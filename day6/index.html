@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+        <title>토스트 메세지</title>
+    </head>
+    <body>
+        <button id="toast-btn" onclick="toastOn()">Toast Message Click</button>
+        <div id="toast-message">Toast Message</div>
+    </body>
+
+    <script>
+        const toastBtn = document.querySelector("#toast-btn");
+        const toastMessage = document.querySelector("#toast-message");
+
+        toastOn = () => {
+            toastMessage.classList.add("active");
+            setTimeout(function () {
+                toastMessage.classList.remove("active");
+            }, 2000);
+        };
+    </script>
+</html>

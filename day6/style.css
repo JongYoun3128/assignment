@@ -1,0 +1,26 @@
+#toast-btn {
+    width: fit-content;
+    background-color: dodgerblue;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 50px auto;
+}
+#toast-message {
+    position: fixed;
+    left: 50%;
+    bottom: 0px;
+    transform: translate(-50%);
+    transition: 0.5s;
+    font-size: 100px;
+    color: blueviolet;
+    opacity: 0;
+}
+#toast-message.active {
+    bottom: 130px;
+    opacity: 1;
+}
