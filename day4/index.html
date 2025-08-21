@@ -1,122 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="style.css" />
-        <title>Document</title>
-    </head>
-    <body>
-        <button class="add" onclick="addBtn()">메뉴 추가하기</button>
-        <ul class="menu_list">
-            <!-- <li>
-                <div class="menu-flex">
-                    <div class="menu-img">
-                        <img src="" alt="" />
-                    </div>
-                    <div class="menu-text">
-                        <h2>메뉴명</h2>
-                        <h3>가격</h3>
-                        <h4>설명</h4>
-                    </div>
-                </div>
-                <div class="menu-btn">
-                    <button class="correction" onclick="correctionBtn()">수정</button>
-                    <button class="delete" onclick="deleteBtn()">삭제</button>
-                </div>
-            </li> -->
-        </ul>
-        <div class="modal">
-            <div class="modal-title">
-                <h1>메뉴추가</h1>
-            </div>
-            <div class="box">
-                <label>메뉴명 :</label>
-                <input type="text" id="add-menu" placeholder="메뉴를 입력하세요" />
-            </div>
-            <div class="box">
-                <label>가격 :</label>
-                <input type="text" id="add-price" placeholder="가격를 입력하세요" />
-            </div>
-            <div class="box">
-                <label>설명 :</label>
-                <input type="text" id="add-desc" placeholder="설명를 입력하세요" />
-            </div>
-            <div class="btn-flex">
-                <button class="regist" onclick="registBtn()">등록</button>
-                <button class="close" onclick="closebtn()">취소</button>
-            </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button class="add" onclick="addBtn()">메뉴 추가하기</button>
+    <ul class="menu_list"></ul>
+
+    <!-- 템플릿 시작 -->
+    <template id="menu_item">
+      <li>
+        <div class="menu-flex">
+          <div class="menu-img">
+            <img src="" alt="" class="foodImage" />
+          </div>
+          <div class="menu-text">
+            <h2 class="title">메뉴명:title 들어갈자리</h2>
+            <h3 class="price">가격:price 들어갈자리</h3>
+            <h4 class="desc">설명:desc 들어갈자리</h4>
+          </div>
         </div>
+        <div class="menu-btn">
+          <button class="correction">수정</button>
+          <button class="delete">삭제</button>
+        </div>
+      </li>
+    </template>
+    <!-- 템플릿 끝 -->
 
-        <script>
-            const modal = document.querySelector(".modal");
+    <div class="modal">
+      <div class="modal-title">
+        <h1>메뉴추가</h1>
+      </div>
 
-            const test = async () => {
-                const res = await fetch("http://tomhoon.my:25000/api/v1/food/getFoods");
-                const 결과 = await res.json();
-                // 여기서 data를 이용해 innerHTML 사용하기
+      <input type="text" hidden id="fno" />
 
-                const menuList = document.querySelector(".menu_list");
+      <div class="box">
+        <label>메뉴명 :</label>
+        <input type="text" id="add-menu" placeholder="메뉴를 입력하세요" />
+      </div>
+      <div class="box">
+        <label>가격 :</label>
+        <input type="text" id="add-price" placeholder="가격를 입력하세요" />
+      </div>
+      <div class="box">
+        <label>설명 :</label>
+        <input type="text" id="add-desc" placeholder="설명를 입력하세요" />
+      </div>
+      <div class="btn-flex">
+        <button class="regist" onclick="registBtn()">등록</button>
+        <button class="close" onclick="hideModal()">취소</button>
+      </div>
+    </div>
 
-                결과.data.forEach((요소, 인덱스) => {
-                    menuList.innerHTML += `
-            <li>
-                <div class="menu-flex">
-                    <div class="menu-img">
-                        <img src="${요소.foodImageUrl}" alt="" />
-                    </div>
-                    <div class="menu-text">
-                        <h2>메뉴명:${요소.title}</h2>
-                        <h3>가격:${요소.price}</h3>
-                        <h4>설명:${요소.foodDesc}</h4>
-                    </div>
-                </div>
-                <div class="menu-btn">
-                    <button class="correction" onclick="correctionBtn()">수정</button>
-                    <button class="delete" onclick="deleteBtn(${요소.fno})">삭제</button>
-                </div>
-            </li>
-            `;
-                });
-            };
-            const registBtn = async () => {
-                const menuText = document.querySelector("#add-menu");
-                const menuPrice = document.querySelector("#add-price");
-                const menuDesc = document.querySelector("#add-desc");
-                const param = {
-                    title: menuText.value,
-                    price: menuPrice.value,
-                    foodDesc: menuDesc.value,
-                };
-                const res = await fetch("http://tomhoon.my:25000/api/v1/food/registerFood", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(param),
-                });
-                const 결과 = await res.json();
-                modal.style.display = "none";
-            };
-            const deleteBtn = async (fno) => {
-                const res = await fetch(`http://tomhoon.my:25000/api/v1/food/deleteFood/${fno}`, {
-                    method: "DELETE",
-                });
-                const 결과 = await res.json();
-            };
-            // const correctionBtn = (요소) => {
-            //     console.log(요소);
-            //     // 모달 띄우기
-            //     modal.style.display = "block";
-            //     modal = 요소;
-            // };
-            const addBtn = () => {
-                modal.style.display = "block";
-            };
-            const closebtn = () => {
-                modal.style.display = "none";
-            };
-            test();
-        </script>
-    </body>
+    <script>
+      const modal = document.querySelector('.modal');
+      const regist = document.querySelector('.regist');
+
+      const menuText = document.querySelector('#add-menu');
+      const menuPrice = document.querySelector('#add-price');
+      const menuDesc = document.querySelector('#add-desc');
+      const menuFno = document.querySelector('#fno');
+
+      let is수정모드 = false;
+
+      const test = async () => {
+        const res = await fetch('http://tomhoon.my:25000/api/v1/food/getFoods');
+        const 결과 = await res.json();
+        // 여기서 data를 이용해 innerHTML 사용하기
+
+        const menuList = document.querySelector('.menu_list');
+        const 템플릿 = document.getElementById('menu_item');
+
+        menuList.innerHTML = '';
+
+        결과.data.forEach((요소, 인덱스) => {
+          const node = 템플릿.content.cloneNode(true);
+
+          node.querySelector('.title').textContent = '메뉴명:' + 요소.title;
+          node.querySelector('.price').textContent = '가격:' + 요소.price;
+          node.querySelector('.desc').textContent = '설명:' + 요소.foodDesc;
+          node.querySelector('.foodImage').src = 요소.foodImageUrl;
+
+          const 수정버튼 = node.querySelector('.correction');
+          const 취소버튼 = node.querySelector('.delete');
+
+          수정버튼.addEventListener('click', () => {
+            correctionBtn(요소);
+          });
+
+          취소버튼.addEventListener('click', () => {
+            deleteBtn(요소.fno);
+          });
+
+          menuList.appendChild(node);
+        });
+      };
+      const registBtn = async () => {
+        const param = {
+          title: menuText.value,
+          price: menuPrice.value,
+          foodDesc: menuDesc.value,
+        };
+
+        let 등록or수정주소 = 'http://tomhoon.my:25000/api/v1/food/registerFood';
+        let 등록or수정 = 'POST';
+
+        if (is수정모드) {
+          등록or수정주소 = 'http://tomhoon.my:25000/api/v1/food/updateFood';
+          등록or수정 = 'PUT';
+
+          // 수정시에는 고유번호가 필요.
+          // 고유번호를 갖고 찾아서 Update함
+          param.fno = menuFno.value;
+        }
+
+        const res = await fetch(등록or수정주소, {
+          method: 등록or수정,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(param),
+        });
+        const 결과 = await res.json();
+
+        hideModal();
+
+        test();
+      };
+
+      const deleteBtn = async (fno) => {
+        const res = await fetch(`http://tomhoon.my:25000/api/v1/food/deleteFood/${fno}`, {
+          method: 'DELETE',
+        });
+        const 결과 = await res.json();
+
+        test();
+      };
+
+      const addBtn = () => {
+        showModal();
+      };
+
+      const closebtn = () => {
+        hideModal();
+      };
+
+      const correctionBtn = (요소) => {
+        // 모달띄워 수정하기
+
+        // 1. 수정모드 변경
+        is수정모드 = true;
+        regist.textContent = '수정';
+
+        // 2. 모달에 데이터 심기
+        menuText.value = 요소.title;
+        menuPrice.value = 요소.price;
+        menuDesc.value = 요소.foodDesc;
+        menuFno.value = 요소.fno;
+
+        // 3. 모달 띄우기
+        showModal();
+      };
+
+      test();
+
+      const showModal = () => {
+        modal.style.display = 'block';
+      };
+      const hideModal = () => {
+        if (is수정모드) {
+          is수정모드 = false;
+          regist.textContent = '등록';
+        }
+
+        modal.style.display = 'none';
+      };
+    </script>
+  </body>
 </html>
