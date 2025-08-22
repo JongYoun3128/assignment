@@ -1,184 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Document</title>
-  </head>
-  <body>
-    <button class="add" onclick="addBtn()">메뉴 추가하기</button>
-    <ul class="menu_list"></ul>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+        <title>Document</title>
+    </head>
+    <body>
+        <button class="add" onclick="addBtn()">메뉴 추가하기</button>
+        <ul class="menu_list"></ul>
 
-    <!-- 템플릿 시작 -->
-    <template id="menu_item">
-      <li>
-        <div class="menu-flex">
-          <div class="menu-img">
-            <img src="" alt="" class="foodImage" />
-          </div>
-          <div class="menu-text">
-            <h2 class="title">메뉴명:title 들어갈자리</h2>
-            <h3 class="price">가격:price 들어갈자리</h3>
-            <h4 class="desc">설명:desc 들어갈자리</h4>
-          </div>
+        <!-- 템플릿 시작 -->
+        <template id="menu_item">
+            <li>
+                <div class="menu-flex">
+                    <div class="menu-img">
+                        <img src="" alt="" class="foodImage" />
+                    </div>
+                    <div class="menu-text">
+                        <h2 class="title">메뉴명:title 들어갈자리</h2>
+                        <h3 class="price">가격:price 들어갈자리</h3>
+                        <h4 class="desc">설명:desc 들어갈자리</h4>
+                    </div>
+                </div>
+                <div class="menu-btn">
+                    <button class="correction">수정</button>
+                    <button class="delete">삭제</button>
+                </div>
+            </li>
+        </template>
+        <!-- 템플릿 끝 -->
+
+        <div class="modal">
+            <div class="modal-title">
+                <h1>메뉴추가</h1>
+            </div>
+
+            <input type="text" hidden id="fno" />
+
+            <div class="box">
+                <label>메뉴명 :</label>
+                <input type="text" id="add-menu" placeholder="메뉴를 입력하세요" />
+            </div>
+            <div class="box image-box">
+                <label>이미지 :</label>
+                <input type="file" id="add-image" onchange="addImage(event)" />
+            </div>
+            <div class="box">
+                <label>가격 :</label>
+                <input type="text" id="add-price" placeholder="가격를 입력하세요" />
+            </div>
+            <div class="box">
+                <label>설명 :</label>
+                <input type="text" id="add-desc" placeholder="설명를 입력하세요" />
+            </div>
+            <div class="btn-flex">
+                <button class="regist" onclick="registBtn()">등록</button>
+                <button class="close" onclick="hideModal()">취소</button>
+            </div>
         </div>
-        <div class="menu-btn">
-          <button class="correction">수정</button>
-          <button class="delete">삭제</button>
-        </div>
-      </li>
-    </template>
-    <!-- 템플릿 끝 -->
 
-    <div class="modal">
-      <div class="modal-title">
-        <h1>메뉴추가</h1>
-      </div>
+        <script>
+            let 이미지Url = "http://tomhoon.my:25000/uploads/";
+            const modal = document.querySelector(".modal");
+            const regist = document.querySelector(".regist");
 
-      <input type="text" hidden id="fno" />
+            const menuText = document.querySelector("#add-menu");
 
-      <div class="box">
-        <label>메뉴명 :</label>
-        <input type="text" id="add-menu" placeholder="메뉴를 입력하세요" />
-      </div>
-      <div class="box">
-        <label>가격 :</label>
-        <input type="text" id="add-price" placeholder="가격를 입력하세요" />
-      </div>
-      <div class="box">
-        <label>설명 :</label>
-        <input type="text" id="add-desc" placeholder="설명를 입력하세요" />
-      </div>
-      <div class="btn-flex">
-        <button class="regist" onclick="registBtn()">등록</button>
-        <button class="close" onclick="hideModal()">취소</button>
-      </div>
-    </div>
+            const menuPrice = document.querySelector("#add-price");
+            const menuDesc = document.querySelector("#add-desc");
+            const menuFno = document.querySelector("#fno");
 
-    <script>
-      const modal = document.querySelector('.modal');
-      const regist = document.querySelector('.regist');
+            let is수정모드 = false;
 
-      const menuText = document.querySelector('#add-menu');
-      const menuPrice = document.querySelector('#add-price');
-      const menuDesc = document.querySelector('#add-desc');
-      const menuFno = document.querySelector('#fno');
+            const test = async () => {
+                const res = await fetch("http://tomhoon.my:25000/api/v1/food/getFoods");
+                const 결과 = await res.json();
+                // 여기서 data를 이용해 innerHTML 사용하기
 
-      let is수정모드 = false;
+                const menuList = document.querySelector(".menu_list");
+                const 템플릿 = document.getElementById("menu_item");
 
-      const test = async () => {
-        const res = await fetch('http://tomhoon.my:25000/api/v1/food/getFoods');
-        const 결과 = await res.json();
-        // 여기서 data를 이용해 innerHTML 사용하기
+                menuList.innerHTML = "";
 
-        const menuList = document.querySelector('.menu_list');
-        const 템플릿 = document.getElementById('menu_item');
+                결과.data.forEach((요소, 인덱스) => {
+                    const node = 템플릿.content.cloneNode(true);
 
-        menuList.innerHTML = '';
+                    node.querySelector(".title").textContent = "메뉴명:" + 요소.title;
+                    node.querySelector(".price").textContent = "가격:" + 요소.price;
+                    node.querySelector(".desc").textContent = "설명:" + 요소.foodDesc;
+                    node.querySelector(".foodImage").src = 요소.foodImageUrl;
 
-        결과.data.forEach((요소, 인덱스) => {
-          const node = 템플릿.content.cloneNode(true);
+                    const 수정버튼 = node.querySelector(".correction");
+                    const 취소버튼 = node.querySelector(".delete");
 
-          node.querySelector('.title').textContent = '메뉴명:' + 요소.title;
-          node.querySelector('.price').textContent = '가격:' + 요소.price;
-          node.querySelector('.desc').textContent = '설명:' + 요소.foodDesc;
-          node.querySelector('.foodImage').src = 요소.foodImageUrl;
+                    수정버튼.addEventListener("click", () => {
+                        correctionBtn(요소);
+                    });
 
-          const 수정버튼 = node.querySelector('.correction');
-          const 취소버튼 = node.querySelector('.delete');
+                    취소버튼.addEventListener("click", () => {
+                        deleteBtn(요소.fno);
+                    });
 
-          수정버튼.addEventListener('click', () => {
-            correctionBtn(요소);
-          });
+                    menuList.appendChild(node);
+                });
+            };
 
-          취소버튼.addEventListener('click', () => {
-            deleteBtn(요소.fno);
-          });
+            const addImage = async (event) => {
+                let 이미지등록 = "http://tomhoon.my:25000/api/v1/food/uploadImage";
+                let 등록or수정 = "POST";
 
-          menuList.appendChild(node);
-        });
-      };
-      const registBtn = async () => {
-        const param = {
-          title: menuText.value,
-          price: menuPrice.value,
-          foodDesc: menuDesc.value,
-        };
+                const formData = new FormData();
+                formData.append("file", event.target.files[0]);
 
-        let 등록or수정주소 = 'http://tomhoon.my:25000/api/v1/food/registerFood';
-        let 등록or수정 = 'POST';
+                const res = await fetch(이미지등록, {
+                    method: 등록or수정,
+                    body: formData,
+                });
 
-        if (is수정모드) {
-          등록or수정주소 = 'http://tomhoon.my:25000/api/v1/food/updateFood';
-          등록or수정 = 'PUT';
+                const 결과 = await res.json();
+                console.log(결과.data.이미지경로);
+                이미지Url += 결과.data.이미지경로;
+                console.log(이미지Url);
+            };
 
-          // 수정시에는 고유번호가 필요.
-          // 고유번호를 갖고 찾아서 Update함
-          param.fno = menuFno.value;
-        }
+            const registBtn = async () => {
+                const param = {
+                    title: menuText.value,
+                    price: menuPrice.value,
+                    foodDesc: menuDesc.value,
+                    foodImageUrl: 이미지Url,
+                };
 
-        const res = await fetch(등록or수정주소, {
-          method: 등록or수정,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(param),
-        });
-        const 결과 = await res.json();
+                let text = document.querySelector("#add-image");
 
-        hideModal();
+                let 등록or수정주소 = "http://tomhoon.my:25000/api/v1/food/registerFood";
+                let 등록or수정 = "POST";
 
-        test();
-      };
+                if (is수정모드) {
+                    등록or수정주소 = "http://tomhoon.my:25000/api/v1/food/updateFood";
+                    등록or수정 = "PUT";
 
-      const deleteBtn = async (fno) => {
-        const res = await fetch(`http://tomhoon.my:25000/api/v1/food/deleteFood/${fno}`, {
-          method: 'DELETE',
-        });
-        const 결과 = await res.json();
+                    // 수정시에는 고유번호가 필요.
+                    // 고유번호를 갖고 찾아서 Update함
+                    param.fno = menuFno.value;
+                }
 
-        test();
-      };
+                const res = await fetch(등록or수정주소, {
+                    method: 등록or수정,
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(param),
+                });
+                const 결과 = await res.json();
+                이미지Url = "http://tomhoon.my:25000/uploads/";
+                text.value = "";
 
-      const addBtn = () => {
-        showModal();
-      };
+                hideModal();
 
-      const closebtn = () => {
-        hideModal();
-      };
+                test();
+            };
 
-      const correctionBtn = (요소) => {
-        // 모달띄워 수정하기
+            const deleteBtn = async (fno) => {
+                const res = await fetch(`http://tomhoon.my:25000/api/v1/food/deleteFood/${fno}`, {
+                    method: "DELETE",
+                });
+                const 결과 = await res.json();
 
-        // 1. 수정모드 변경
-        is수정모드 = true;
-        regist.textContent = '수정';
+                test();
+            };
 
-        // 2. 모달에 데이터 심기
-        menuText.value = 요소.title;
-        menuPrice.value = 요소.price;
-        menuDesc.value = 요소.foodDesc;
-        menuFno.value = 요소.fno;
+            const addBtn = () => {
+                showModal();
+            };
 
-        // 3. 모달 띄우기
-        showModal();
-      };
+            const closebtn = () => {
+                hideModal();
+            };
 
-      test();
+            const correctionBtn = (요소) => {
+                // 모달띄워 수정하기
 
-      const showModal = () => {
-        modal.style.display = 'block';
-      };
-      const hideModal = () => {
-        if (is수정모드) {
-          is수정모드 = false;
-          regist.textContent = '등록';
-        }
+                // 1. 수정모드 변경
+                is수정모드 = true;
+                regist.textContent = "수정";
 
-        modal.style.display = 'none';
-      };
-    </script>
-  </body>
+                // 2. 모달에 데이터 심기
+                menuText.value = 요소.title;
+                menuPrice.value = 요소.price;
+                menuDesc.value = 요소.foodDesc;
+                menuFno.value = 요소.fno;
+
+                // 3. 모달 띄우기
+                showModal();
+            };
+
+            test();
+
+            const showModal = () => {
+                modal.style.display = "block";
+            };
+            const hideModal = () => {
+                if (is수정모드) {
+                    is수정모드 = false;
+                    regist.textContent = "등록";
+                }
+
+                modal.style.display = "none";
+            };
+        </script>
+    </body>
 </html>
