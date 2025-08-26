@@ -3,9 +3,41 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
         <title>Document</title>
     </head>
     <body>
-        안녕하세요
+        <div class="ticker">
+            <div class="ticker-track" id="tickerTrack">
+                <div class="ticker-item">안녕하세요</div>
+                <div class="ticker-item">현종윤입니다</div>
+                <div class="ticker-item">잘부탁드립니다</div>
+            </div>
+        </div>
+
+        <script>
+            const track = document.getElementById("tickerTrack");
+            const items = document.querySelectorAll(".ticker-item");
+            let index = 0;
+
+            function moveUp() {
+                index++;
+                track.style.transform = `translateY(-${60 * index}px)`;
+
+                if (index === items.length) {
+                    setTimeout(() => {
+                        track.style.transition = "none";
+                        track.style.transform = "translateY(0)";
+                        index = 0;
+
+                        setTimeout(() => {
+                            track.style.transition = "transform 0.6s ease-in-out";
+                        });
+                    }, 600);
+                }
+            }
+
+            setInterval(moveUp, 2000);
+        </script>
     </body>
 </html>
